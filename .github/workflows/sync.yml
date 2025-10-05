@@ -9,15 +9,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: tgymnich/fork-sync@v1.2
         with:
-          fetch-depth: 0
-      - name: Sync fork
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git remote add upstream https://github.com/anuraghazra/github-readme-stats.git || true
-          git fetch upstream
-          git checkout master
-          git merge upstream/master
-          git push origin master
+          token: ${{ secrets.PAT }}
+          owner: anuraghazra
+          head: master
+          base: master
