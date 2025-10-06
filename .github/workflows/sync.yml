@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: tgymnich/fork-sync@v1.2
         with:
-          token: ${{ secrets.PAT }}
+          github_token: ${{ secrets.PAT }}
           owner: anuraghazra
           head: master
           base: master
