@@ -1,43 +1,10 @@
 // @ts-check
+
 import axios from "axios";
 import toEmoji from "emoji-name-map";
 import wrap from "word-wrap";
 import { themes } from "../../themes/index.js";
-
-const TRY_AGAIN_LATER = "Please try again later";
-
-const SECONDARY_ERROR_MESSAGES = {
-  MAX_RETRY:
-    "You can deploy own instance or wait until public will be no longer limited",
-  NO_TOKENS:
-    "Please add an env variable called PAT_1 with your GitHub API token in vercel",
-  USER_NOT_FOUND: "Make sure the provided username is not an organization",
-  GRAPHQL_ERROR: TRY_AGAIN_LATER,
-  GITHUB_REST_API_ERROR: TRY_AGAIN_LATER,
-  WAKATIME_USER_NOT_FOUND: "Make sure you have a public WakaTime profile",
-};
-
-/**
- * Custom error class to handle custom GRS errors.
- */
-class CustomError extends Error {
-  /**
-   * @param {string} message Error message.
-   * @param {string} type Error type.
-   */
-  constructor(message, type) {
-    super(message);
-    this.type = type;
-    this.secondaryMessage = SECONDARY_ERROR_MESSAGES[type] || type;
-  }
-
-  static MAX_RETRY = "MAX_RETRY";
-  static NO_TOKENS = "NO_TOKENS";
-  static USER_NOT_FOUND = "USER_NOT_FOUND";
-  static GRAPHQL_ERROR = "GRAPHQL_ERROR";
-  static GITHUB_REST_API_ERROR = "GITHUB_REST_API_ERROR";
-  static WAKATIME_ERROR = "WAKATIME_ERROR";
-}
+import { SECONDARY_ERROR_MESSAGES, TRY_AGAIN_LATER } from "./error.js";
 
 /**
  * Auto layout utility, allows us to layout things vertically or horizontally with
@@ -452,54 +419,6 @@ const noop = () => {};
 const logger =
   process.env.NODE_ENV === "test" ? { log: noop, error: noop } : console;
 
-const MIN = 60;
-const HOUR = 60 * MIN;
-const DAY = 24 * HOUR;
-
-const CONSTANTS = {
-  ONE_MINUTE: MIN,
-  FIVE_MINUTES: 5 * MIN,
-  TEN_MINUTES: 10 * MIN,
-  FIFTEEN_MINUTES: 15 * MIN,
-  THIRTY_MINUTES: 30 * MIN,
-
-  TWO_HOURS: 2 * HOUR,
-  FOUR_HOURS: 4 * HOUR,
-  SIX_HOURS: 6 * HOUR,
-  EIGHT_HOURS: 8 * HOUR,
-  TWELVE_HOURS: 12 * HOUR,
-
-  ONE_DAY: DAY,
-  TWO_DAY: 2 * DAY,
-  SIX_DAY: 6 * DAY,
-  TEN_DAY: 10 * DAY,
-
-  CARD_CACHE_SECONDS: DAY,
-  TOP_LANGS_CACHE_SECONDS: 6 * DAY,
-  PIN_CARD_CACHE_SECONDS: 10 * DAY,
-  ERROR_CACHE_SECONDS: 10 * MIN,
-};
-
-/**
- * Missing query parameter class.
- */
-class MissingParamError extends Error {
-  /**
-   * Missing query parameter error constructor.
-   *
-   * @param {string[]} missedParams An array of missing parameters names.
-   * @param {string=} secondaryMessage Optional secondary message to display.
-   */
-  constructor(missedParams, secondaryMessage) {
-    const msg = `Missing params ${missedParams
-      .map((p) => `"${p}"`)
-      .join(", ")} make sure you pass the parameters in URL`;
-    super(msg);
-    this.missedParams = missedParams;
-    this.secondaryMessage = secondaryMessage;
-  }
-}
-
 /**
  * Retrieve text length.
  *
@@ -648,9 +567,6 @@ export {
   getCardColors,
   wrapTextMultiline,
   logger,
-  CONSTANTS,
-  CustomError,
-  MissingParamError,
   measureText,
   lowercaseTrim,
   chunkArray,
